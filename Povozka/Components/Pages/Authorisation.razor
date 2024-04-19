@@ -1,0 +1,39 @@
+﻿@rendermode InteractiveServer
+@page "/"
+@using Povozka.Components.Components
+@using Povozka.Components.Data
+
+<PageTitle>Authorisation</PageTitle>
+
+<p>
+    @(ExistingAccounts.CurrentUser is null ? "Not logged in" : $"Current UID: {ExistingAccounts.CurrentUser.ID} ") 
+    @if (!(ExistingAccounts.CurrentUser is null))
+    {
+        <a href="" @onclick="Logout">Logout</a>
+    }
+</p>
+
+ @if(!_isLogining)
+{
+    <LoginFormComponent Login="Login" ChangeForm="Change"></LoginFormComponent>
+} 
+ else
+{ 
+    <RegistrationFormComponent Login="Login" ChangeForm="Change"></RegistrationFormComponent>
+} 
+
+@code{
+    private bool _isLogining;
+
+    private void Change() {
+        _isLogining = !_isLogining;
+    }
+
+    private void Login(User user) {
+        ExistingAccounts.CurrentUser = user;
+    }
+
+    private void Logout() {
+        ExistingAccounts.CurrentUser = null;
+    }
+}

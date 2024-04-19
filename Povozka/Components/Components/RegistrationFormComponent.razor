@@ -1,0 +1,90 @@
+﻿@using Povozka.Components.Data
+@rendermode InteractiveServer
+
+<style>
+    .body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        transform: translateY(45%);
+    }
+ </style>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+            </div>
+            <div class="card mt-3 d-flex justify-content-center align-items-center" id="register-card" style="display: none;">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Creating new account</h5>
+                    <form>
+                        <div class="form-group form-group-lg">
+                            <!-- Добавлен класс form-group-lg -->
+                            <label for="register-username">Username</label>
+                            <input type="text" class="form-control" id="register-username" placeholder="Enter desired username" @bind="_username">
+                        </div>
+                        <div class="form-group form-group-lg">
+                            <!-- Добавлен класс form-group-lg -->
+                            <label for="register-username">Login</label>
+                            <input type="text" class="form-control" id="register-username" placeholder="Enter desired login" @bind="_login">
+                        </div>
+                        <div class="form-group form-group-lg">
+                            <!-- Добавлен класс form-group-lg -->
+                            <label for="register-password">Password</label>
+                            <input type="password" class="form-control" id="register-password" placeholder="Enter desired password" @bind="_password">
+                        </div>
+                        <button type="button" class="btn btn-primary btn-block btn-sm" style="margin-top: 1rem;" @onclick="NewAccount">Register</button> <!-- Добавлен класс btn-lg -->
+                        <p class="mt-3 text-center">@_message</p>
+                        <p class="mt-3 text-center">Already have an account? <a href="/" id="login-link" @onclick="Clicked">Login</a></p>
+                    </form>
+                </div>
+            </div>
+            <div class="card mt-3">
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EventCallback ChangeForm { get; set; }
+    [Parameter] public EventCallback<User> Login { get; set; }
+
+    private string _username;
+    private string _login;
+    private string _password;
+    private string _message;
+
+    private void Clicked()
+    {
+        ChangeForm.InvokeAsync();
+    }
+
+    private void NewAccount()
+    {
+        _message = "";
+        if (_username == null || _login == null || _password == null)
+        {
+            _message = "Не заполнены обязательные поля!";
+            return;
+        }
+        foreach(var acc in ExistingAccounts.Accounts)
+        {
+            if(acc.Login == _username)
+            {
+                _message = "Данный логин уже занят";
+                return;
+            }
+        }
+        User newUser = new User(_username, _login, _password);
+        ExistingAccounts.AddAccount(newUser);
+        Login.InvokeAsync(newUser);
+        _message = "Аккаунт успешно создан";
+        _login = "";
+        _password = "";
+        _username = "";
+    }
+}

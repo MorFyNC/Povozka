@@ -1,0 +1,90 @@
+﻿@using Povozka.Components.Data
+@rendermode InteractiveServer
+
+<style>
+    .body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        transform: translateY(45%);
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+            </div>
+            <div class="card mt-3 d-flex justify-content-center align-items-center" id="register-card" style="display: none;">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Login</h5>
+                    <form>
+                        <div class="form-group form-group-lg">
+                            <!-- Добавлен класс form-group-lg -->
+                            <label for="register-username">Login</label>
+                            <input type="text" class="form-control" id="register-username" placeholder="Enter username" @bind="_login">
+                        </div>
+                        <div class="form-group form-group-lg">
+                            <!-- Добавлен класс form-group-lg -->
+                            <label for="register-password">Password</label>
+                            <input type="password" class="form-control" id="register-password" placeholder="Enter password" @bind="_password">
+                        </div>
+                        <button type="button" class="btn btn-primary btn-block btn-sm" style="margin-top: 1rem;" @onclick="LoginButton">Log in</button> <!-- Добавлен класс btn-lg -->
+                        <p class="mt-3 text-center">@_message</p>
+                        <p class="mt-3 text-center"> Don't have an account yet? <a href="" id="login-link" @onclick="Clicked"><br />Create new account</a></p>
+                    </form>
+                </div>
+            </div>
+            <div class="card mt-3">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+    [Parameter] public EventCallback ChangeForm { get; set; }
+    [Parameter] public EventCallback<User> Login { get; set; }
+
+    private string _login;
+    private string _password;
+    private string _message;
+
+    private void Clicked()
+    {
+        ChangeForm.InvokeAsync();
+    }
+
+    private void LoginButton()
+    {
+        _message = "";
+        if(_password == "" || _login == "")
+        {
+            _message = "Не заполнены обязательные поля";
+            return;
+        }
+        foreach(var acc in ExistingAccounts.Accounts)
+        {
+            if(acc.Login == _login)
+            {
+                if(acc.Password == _password)
+                {
+                    _message = "Вход успешно выполнен";
+                    Login.InvokeAsync(acc);
+                    return;
+                }
+                else
+                {
+                    _message = "Неверный пароль";
+                    return;
+                }
+            }
+        }
+        _message = "Аккаунта с таким логином не существует";
+    }
+}
