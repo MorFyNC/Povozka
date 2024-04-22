@@ -7,7 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\Pages\ChatsPage.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\Pages\ChatsPage.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\Pages\ChatsPage.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Components\Pages\ChatsPage.razor" />
   </ItemGroup>
 
 </Project>
