@@ -1,4 +1,5 @@
-﻿@using Povozka.Components.Data
+﻿@    using Povozka.Components.Data
+@    using System.Text.RegularExpressions
 @rendermode InteractiveServer
 
 <style>
@@ -66,12 +67,19 @@
     private void NewAccount()
     {
         _message = "";
+
         if (_username == null || _login == null || _password == null)
         {
             _message = "Не заполнены обязательные поля!";
             return;
         }
-        foreach(var acc in ExistingAccounts.Accounts)
+
+        if(!(CheckPassword(_password, ref _message)))
+        {
+            return;
+        }
+
+        foreach(var acc in DataContext.Accounts)
         {
             if(acc.Login == _username)
             {
@@ -80,11 +88,33 @@
             }
         }
         User newUser = new User(_username, _login, _password);
-        ExistingAccounts.AddAccount(newUser);
+        DataContext.AddAccount(newUser);
         Login.InvokeAsync(newUser);
         _message = "Аккаунт успешно создан";
         _login = "";
         _password = "";
         _username = "";
+    }
+
+    private bool CheckPassword(string _password, ref string _message)
+    {
+        bool ContainsAllSymbols = Regex.IsMatch(_password, @"\d") && Regex.IsMatch(_password, @"[!@#$%^&*(),.?\"":{}|<>]") && Regex.IsMatch(_password, @"[A-Z]");
+        List<string> words = new()
+        {
+            "talgat",
+            "praktika",
+            "hochetSdat",
+            "malishka",
+
+        };
+        bool ContainsWord = words.Any(x => _password.Contains(x));
+
+        if (!(ContainsAllSymbols) || _password.Length <= 6 || !(ContainsWord) || Regex.IsMatch(_password, @"^\d*"))
+        {
+            _message = "Пароль задан в неверном формате";
+            return false;
+        }
+
+        return true;
     }
 }

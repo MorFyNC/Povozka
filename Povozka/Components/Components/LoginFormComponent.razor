@@ -1,4 +1,4 @@
-﻿@using Povozka.Components.Data
+﻿@    using Povozka.Components.Data
 @rendermode InteractiveServer
 
 <style>
@@ -68,7 +68,7 @@
             _message = "Не заполнены обязательные поля";
             return;
         }
-        foreach(var acc in ExistingAccounts.Accounts)
+        foreach(var acc in DataContext.Accounts)
         {
             if(acc.Login == _login)
             {

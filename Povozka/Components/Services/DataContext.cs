@@ -1,12 +1,12 @@
 ﻿using Newtonsoft.Json;
+using Povozka.Components.Data;
 
-namespace Povozka.Components.Data
+namespace Povozka.Components.Services
 {
-    public static class ExistingAccounts
+    public static class DataContext
     {
         public static List<User> Accounts { get; set; }
         private static string path = "Components//Data//Accounts.txt";
-        public static User CurrentUser { get; set; }
 
         public static void GetAccounts()
         {
@@ -17,6 +17,11 @@ namespace Povozka.Components.Data
         {
             Accounts.Add(account);
             File.WriteAllText(path, JsonConvert.SerializeObject(Accounts));
+        }
+
+        public static void DeleteAccount(User account)
+        {
+            Accounts.Remove(account);
         }
     }
 }

@@ -1,5 +1,5 @@
 using Povozka.Components;
-using Povozka.Components.Data;
+using Povozka.Components.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-ExistingAccounts.GetAccounts();
+DataContext.GetAccounts();
 
 var app = builder.Build();
 
