@@ -1,0 +1,44 @@
+﻿@using Povozka.Components.Components.Message
+@using Povozka.Components.Data
+@using Povozka.Components.Services
+<style>
+    .scrollable-container {
+        min-height: 564px;
+        max-height: 564px; /* Максимальная высота контейнера */
+        overflow-y: auto; /* Включение вертикальной прокрутки при необходимости */
+        margin-top: 1rem;
+    }
+</style>
+<div class="container">
+    @if(Receiver != null)
+    {
+        <div class="container" id="header">
+            <div class="card mt-3"></div>
+            <h5 class="ms-auto" style="margin-top: 1rem;">@Receiver.Username</h5>
+            <div class="card mt-3"></div>
+        </div>
+        <div class="scrollable-container">
+            @foreach(var message in UserContext.OpenedChat.Messages)
+            {
+                <MessageComponent Message="message"></MessageComponent>
+            }
+        </div>
+        <input @bind-value="messageText" @onkeypress="WriteMessage" style="width: 100%;"/>
+    }
+
+</div>
+
+@code {
+    [Parameter] public User Receiver { get; set; }
+    private string messageText { get; set; }
+
+    private void WriteMessage(KeyboardEventArgs k)
+    {
+        if(k.Key == "Enter" && messageText != null && messageText != "")
+        {
+            UserContext.OpenedChat.WriteMessage(messageText);
+            messageText = "";
+            StateHasChanged();
+        }
+    }
+}

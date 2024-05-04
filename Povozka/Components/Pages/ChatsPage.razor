@@ -1,0 +1,24 @@
+﻿@rendermode InteractiveServer
+@page "/chats"
+@using Povozka.Components.Components
+@using Povozka.Components.Data
+
+<HeaderComponent></HeaderComponent>
+
+<div class="container text-center">
+    <div class="row">
+        <div class="col-4">
+            <ChatListComponent GetReceiver="GetReceiver"></ChatListComponent>
+        </div>
+        <div class="col-8">
+            <ChatComponent Receiver="_receiver"></ChatComponent>
+        </div>
+    </div>
+</div>
+@code {
+    private User _receiver;
+    private void GetReceiver(User receiver)
+    {
+        _receiver = receiver;
+    }
+}

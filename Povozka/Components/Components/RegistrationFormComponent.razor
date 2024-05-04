@@ -1,5 +1,7 @@
-﻿@    using Povozka.Components.Data
-@    using System.Text.RegularExpressions
+﻿@using Povozka.Components.Data
+@using Povozka.Components.Data
+@using System.Text.RegularExpressions
+@using Povozka.Components.Services
 @rendermode InteractiveServer
 
 <style>
@@ -67,8 +69,8 @@
     private void NewAccount()
     {
         _message = "";
-
-        if (_username == null || _login == null || _password == null)
+        string login = _login?.ToLower();
+        if (_username == null || login == null || _password == null)
         {
             _message = "Не заполнены обязательные поля!";
             return;
@@ -81,13 +83,13 @@
 
         foreach(var acc in DataContext.Accounts)
         {
-            if(acc.Login == _username)
+            if (acc.Login == login)
             {
                 _message = "Данный логин уже занят";
                 return;
             }
         }
-        User newUser = new User(_username, _login, _password);
+        User newUser = new User(_username, login, _password);
         DataContext.AddAccount(newUser);
         Login.InvokeAsync(newUser);
         _message = "Аккаунт успешно создан";
@@ -109,7 +111,7 @@
         };
         bool ContainsWord = words.Any(x => _password.Contains(x));
 
-        if (!(ContainsAllSymbols) || _password.Length <= 6 || !(ContainsWord) || Regex.IsMatch(_password, @"^\d*"))
+        if (!(ContainsAllSymbols) || _password.Length <= 6 || !(ContainsWord) || !Regex.IsMatch(_password, @"^\d*"))
         {
             _message = "Пароль задан в неверном формате";
             return false;

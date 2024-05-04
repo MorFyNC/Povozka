@@ -1,0 +1,97 @@
+﻿@using Blazorise
+@using Povozka.Components.Data
+@using Povozka.Components.Services
+
+<div class="container ms-0" style="width: 400px; margin-top: 1rem;">
+    <div class="input-group mb-3">
+        <span class="input-group-text">@@</span>
+        <input @bind="Input" @onkeypress="Search" type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+    </div>
+
+    <ListGroup Mode="ListGroupMode.Selectable" @bind-SelectedItem="_selectedItem">
+        @if(_foundUsers.Count != 0)
+        {
+            foreach(var user in _foundUsers)
+            {
+                if(user != UserContext.CurrentUser) 
+                {
+                    <ListGroupItem @onclick="() => OpenChat(user)">@user.Username</ListGroupItem>
+                }
+            }
+        }
+        else
+        {
+            <p class="text-black">Ничего не найдено</p>
+        }
+    </ListGroup>
+</div>
+
+@code {
+    [Parameter] public EventCallback<User> GetReceiver { get; set; }
+    private string _selectedItem;
+    private string _input;
+    private string Input { get { return _input; } set
+        {
+            _input = value;
+            Search();
+        } 
+    }
+    private List<User> _foundUsers = new List<User>();
+
+    private void Search()
+    {
+        _foundUsers.Clear();
+        var currentLst = new List<User>();
+        if (!String.IsNullOrEmpty(_input))
+        {
+            currentLst = DataContext.Accounts.Where(x => x.Username.Contains(_input)).ToList();
+
+        }
+        foreach(var a in currentLst)
+        {
+            bool canAdd = true;
+            foreach(var acc in _foundUsers)
+            {
+                if (acc.ID == a.ID)
+                {
+                    canAdd = false;
+                }
+            }
+            if(canAdd) _foundUsers.Add(a);
+        }
+        GetChats();
+        StateHasChanged();
+    }
+
+    private void OpenChat(User user)
+    {
+        user.EnterChat(UserContext.CurrentUser);
+        UserContext.OpenedChat.ReadMessages();
+        GetReceiver.InvokeAsync(user);
+    }
+
+    protected override void OnInitialized()
+    {
+        GetChats();
+        base.OnInitialized();
+    }
+
+    private void GetChats()
+    {
+        foreach (var item in UserContext.CurrentUser.Chats)
+        {
+            bool canAdd = true;
+            Chat chat = DataContext.FindByGuid(item.Value);
+            User user = DataContext.FindUserByGuid(item.Key);
+            foreach(var acc in _foundUsers)
+            {
+                if (acc.ID == user.ID)
+                {
+                    canAdd = false;
+                }
+            }
+            if(canAdd) 
+                _foundUsers.Add(user);
+        }
+    }
+}

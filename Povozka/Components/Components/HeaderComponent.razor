@@ -1,0 +1,30 @@
+﻿@using Povozka.Components.Services
+@inject NavigationManager NavManager
+
+<style>
+    .my-container {
+        width= "100%";
+    }
+</style>
+
+<div class="my-container">
+    <p>
+        @(UserContext.CurrentUser is null ? "Not logged in" : $"Current UID: {UserContext.CurrentUser.ID} ")
+        @if (!(UserContext.CurrentUser is null))
+        {
+            <a href="" @onclick="Logout">Logout</a>
+        }
+    </p>
+</div>
+@code {
+    private void Logout()
+    {
+        UserContext.CurrentUser = null;
+        NavManager.NavigateTo("/");
+    }
+
+    public void Refresh()
+    {
+        StateHasChanged();
+    }
+}

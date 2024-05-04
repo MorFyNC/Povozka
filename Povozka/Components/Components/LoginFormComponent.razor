@@ -1,4 +1,6 @@
-﻿@    using Povozka.Components.Data
+﻿@using Povozka.Components.Data
+@using Povozka.Components.Data
+@using Povozka.Components.Services
 @rendermode InteractiveServer
 
 <style>
@@ -70,7 +72,7 @@
         }
         foreach(var acc in DataContext.Accounts)
         {
-            if(acc.Login == _login)
+            if(acc.Login == _login.ToLower())
             {
                 if(acc.Password == _password)
                 {

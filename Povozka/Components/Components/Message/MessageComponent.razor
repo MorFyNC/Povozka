@@ -1,0 +1,34 @@
+﻿@using Povozka.Components.Data
+@using Povozka.Components.Services
+<style>
+    .mymessage {
+        background-color: #DCF8C6;
+        border-radius: 15px;
+        padding: 10px;
+        margin-bottom: 10px;
+        text-align: left;
+    }
+
+    .receivedmessage {
+        background-color: #CCCCCC;
+        border-radius: 15px;
+        padding: 10px;
+        margin-bottom: 10px;
+        text-align: left;
+    }
+
+    .message-body {
+        margin-bottom: 0;
+        text-align: left; /* Выравнивание текста внутри сообщений по левому краю */
+    }
+</style>
+<div style="max-width: 300px; margin-@(Message.SenderName == UserContext.CurrentUser.Username ? "left" : "right"): auto;">
+    <div class="@(Message.SenderName == UserContext.CurrentUser.Username ? "mymessage" : "receivedmessage")">
+        <p style="font-weight: bold;">@Message.SenderName</p>
+        <p class="message-body">@Message.Text</p>
+    </div>
+</div>
+
+@code {
+    [Parameter] public required Message Message { get; set; }
+}

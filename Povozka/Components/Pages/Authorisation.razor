@@ -1,17 +1,13 @@
 ﻿@rendermode InteractiveServer
 @page "/"
-@    using Povozka.Components.Components
-@    using Povozka.Components.Data
+@using Povozka.Components.Components
+@using Povozka.Components.Data
+@using Povozka.Components.Services
+@inject NavigationManager NavManager
 
 <PageTitle>Authorisation</PageTitle>
 
-<p>
-    @(UserContext.CurrentUser is null ? "Not logged in" : $"Current UID: {UserContext.CurrentUser.ID} ")
-    @if (!(UserContext.CurrentUser is null))
-    {
-        <a href="" @onclick="Logout">Logout</a>
-    }
-</p>
+<HeaderComponent></HeaderComponent>
 
  @if(!_isLogining)
 {
@@ -22,7 +18,6 @@
     <RegistrationFormComponent Login="Login" ChangeForm="Change"></RegistrationFormComponent>
 } 
 @* <NavLink href="chats">sawdsa</NavLink> *@
-
 @code{
     private bool _isLogining;
 
@@ -32,9 +27,6 @@
 
     private void Login(User user) {
         UserContext.CurrentUser = user;
-    }
-
-    private void Logout() {
-        UserContext.CurrentUser = null;
+        NavManager.NavigateTo("/chats");
     }
 }
